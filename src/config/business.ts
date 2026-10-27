@@ -10,27 +10,27 @@
 
 // ─── Brand ───────────────────────────────────────────
 export const brand = {
-  /** OWNER: Replace with the official registered business name */
-  name: "KLIA Cab",
-  /** OWNER: Replace with a tagline or leave empty */
+  /** Official registered business name */
+  name: "KLIA/KLIA2 Cab Booking Services Co.",
+  /** Tagline */
   tagline: "Reliable Airport Transfers to KLIA & KLIA2",
-  /** OWNER: Provide an official logo file in /public/images/ */
+  /** Official logo file in /public/images/ */
   logoUrl: "/images/logo.svg",
-  /** Short text-based fallback when logo is unavailable */
-  logoText: "KLIA Cab",
+  /** Short text-based fallback when logo is unavailable / mobile header */
+  logoText: "KLIA/KLIA2 Cab",
 };
 
 // ─── Contact ─────────────────────────────────────────
 export const contact = {
-  /** OWNER: WhatsApp number in international format (e.g. 60123456789) */
-  whatsapp: "",
-  /** OWNER: Primary phone number */
-  phone: "",
-  /** OWNER: Business email address */
-  email: "",
-  /** OWNER: Facebook or other social media URL */
+  /** WhatsApp number in international format (loaded privately from .env.local or fallback) */
+  whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "601139350923",
+  /** Primary phone number */
+  phone: process.env.NEXT_PUBLIC_PHONE_NUMBER || "+60123456789",
+  /** Business email address */
+  email: process.env.NEXT_PUBLIC_BUSINESS_EMAIL || "",
+  /** Facebook or other social media URL */
   facebook: "",
-  /** OWNER: Instagram URL */
+  /** Instagram URL */
   instagram: "",
 };
 

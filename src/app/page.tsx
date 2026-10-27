@@ -1,16 +1,35 @@
 import Link from "next/link";
-import { brand, vehicles, faqItems, contact, getWhatsAppUrl, bookingPolicies } from "@/config/business";
+import {
+  brand,
+  vehicles,
+  faqItems,
+  contact,
+  getWhatsAppUrl,
+  getPhoneUrl,
+  bookingPolicies,
+  fareZones,
+  surcharges,
+  hasFaresAvailable,
+  serviceAreas,
+} from "@/config/business";
 import { QuickBookingForm } from "@/components/QuickBookingForm";
 import { VehicleCard } from "@/components/VehicleCard";
 import { FAQSection } from "@/components/FAQSection";
+import { BookingForm } from "@/components/BookingForm";
+import { MobileQuickNav } from "@/components/MobileQuickNav";
 
 export default function HomePage() {
   const whatsappUrl = getWhatsAppUrl("Hello, I'd like to book an airport transfer.");
+  const phoneUrl = getPhoneUrl();
+  const faresAvailable = hasFaresAvailable();
 
   return (
     <>
-      {/* ─── Hero Section ──────────────────────────── */}
-      <section className="hero">
+      {/* ─── Mobile Sticky Module Navigator ───────────── */}
+      <MobileQuickNav />
+
+      {/* ─── Module 1: Hero & Quick Booking ────────────── */}
+      <section className="hero" id="quick-book">
         <div className="container">
           <div className="hero__grid">
             <div className="hero__content">
@@ -24,7 +43,7 @@ export default function HomePage() {
                 confirms every detail before your trip.
               </p>
               <div className="hero__actions">
-                <Link href="/booking" className="btn btn-primary btn-lg">
+                <Link href="#booking" className="btn btn-primary btn-lg">
                   Request a Booking
                 </Link>
                 {whatsappUrl && (
@@ -53,7 +72,7 @@ export default function HomePage() {
                     <circle cx="17" cy="17" r="2" />
                   </svg>
                   <p style={{ color: "var(--color-text-muted)", fontSize: "0.85rem", marginTop: 8 }}>
-                    Vehicle image
+                    Fast Airport Pickup
                   </p>
                 </div>
                 <div className="hero__stats">
@@ -76,14 +95,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── Quick Booking ─────────────────────────── */}
-      <section className="section" style={{ paddingTop: 0, marginTop: -40, position: "relative", zIndex: 10 }}>
+      {/* ─── Quick Booking Bar ──────────────────────── */}
+      <section className="section" style={{ paddingTop: 0, marginTop: -32, position: "relative", zIndex: 10 }}>
         <div className="container">
           <QuickBookingForm />
         </div>
       </section>
 
-      {/* ─── Vehicles ──────────────────────────────── */}
+      {/* ─── Module 2: Fleet ────────────────────────── */}
       <section className="section" id="vehicles">
         <div className="container">
           <div className="section-header">
@@ -101,44 +120,148 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── How It Works ──────────────────────────── */}
+      {/* ─── Module 3: Rates & Coverage Zones ───────── */}
+      <section className="section section-alt" id="rates">
+        <div className="container">
+          <div className="section-header">
+            <span className="section-badge">Transparent Pricing</span>
+            <h2>Rates &amp; Service Zones</h2>
+            <p>
+              Standard fares covering Greater Kuala Lumpur, Selangor, and outstation destinations.
+            </p>
+          </div>
+
+          {faresAvailable ? (
+            <div className="rates-table-wrapper" style={{ marginBottom: 32 }}>
+              <div style={{ overflowX: "auto" }}>
+                <table className="rates-table">
+                  <thead>
+                    <tr>
+                      <th>Zone / Area</th>
+                      {vehicles.map((v) => (
+                        <th key={v.id}>{v.name}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {fareZones.map((zone) => (
+                      <tr key={zone.id}>
+                        <td>
+                          <strong>{zone.name}</strong>
+                          <br />
+                          <span className="rates-areas">{zone.areas.join(", ")}</span>
+                        </td>
+                        {vehicles.map((v) => (
+                          <td key={v.id} className="rates-price">
+                            {zone.fares[v.id] || <span className="rates-quote">Quote</span>}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : (
+            <div className="card" style={{ maxWidth: 720, margin: "0 auto 32px", textAlign: "center", padding: "28px 20px" }}>
+              <div style={{ fontSize: "2rem", marginBottom: 12 }}>💬</div>
+              <h3 style={{ margin: "0 0 8px", fontSize: "1.2rem" }}>Instant Fare Quotation</h3>
+              <p style={{ margin: "0 auto 16px", maxWidth: 520, fontSize: "0.95rem" }}>
+                We provide competitive, fixed-rate quotes with zero hidden surge pricing.
+                Select your route or request a quotation via WhatsApp or our booking form below.
+              </p>
+              <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+                <Link href="#booking" className="btn btn-primary btn-sm">
+                  Fill Booking Form
+                </Link>
+                {whatsappUrl && (
+                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="btn btn-whatsapp btn-sm">
+                    Ask on WhatsApp
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Coverage Summary Badges */}
+          <div style={{ maxWidth: 800, margin: "0 auto" }}>
+            <h4 style={{ textAlign: "center", margin: "0 0 16px", fontSize: "1rem", color: "var(--color-text-secondary)" }}>
+              Covered Pick-up &amp; Drop-off Zones
+            </h4>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center" }}>
+              {serviceAreas.coverageAreas.map((area) => (
+                <span
+                  key={area}
+                  style={{
+                    background: "var(--color-white)",
+                    border: "1px solid var(--color-border)",
+                    borderRadius: "100px",
+                    padding: "6px 14px",
+                    fontSize: "0.85rem",
+                    fontWeight: 500,
+                    color: "var(--color-text-primary)",
+                  }}
+                >
+                  📍 {area}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Module 4: Full Booking Form ────────────── */}
+      <section className="section" id="booking">
+        <div className="container">
+          <div className="section-header">
+            <span className="section-badge">Fast Handoff</span>
+            <h2>Book Your Transfer</h2>
+            <p>
+              Complete the details below to generate your confirmed booking request.
+            </p>
+          </div>
+          <div className="container-narrow" style={{ padding: 0 }}>
+            <BookingForm />
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Module 5: How It Works ─────────────────── */}
       <section className="section section-alt" id="how-it-works">
         <div className="container">
           <div className="section-header">
             <span className="section-badge">Simple Process</span>
             <h2>How It Works</h2>
-            <p>
-              Booking your airport transfer takes just a few steps.
-            </p>
+            <p>Booking your airport transfer takes just a few steps.</p>
           </div>
           <div className="steps-grid">
             {[
               {
                 step: "1",
                 title: "Submit a Request",
-                desc: "Fill in your journey details through our booking form. Your request is sent directly to our team via WhatsApp.",
+                desc: "Fill in your journey details. Your request is formatted and sent directly to our team via WhatsApp.",
                 icon: "📝",
               },
               {
                 step: "2",
                 title: "Get Confirmation",
-                desc: "Our team reviews your request and contacts you to confirm the booking details, fare, and pickup arrangements.",
+                desc: "Our dispatch team reviews vehicle availability and confirms your booking details and pickup time.",
                 icon: "✅",
               },
               {
                 step: "3",
                 title: "Meet Your Driver",
-                desc: "On the day of travel, your driver will be ready at the agreed time and location for a smooth transfer.",
+                desc: "Your driver arrives punctually at the agreed terminal meeting point or pickup address.",
                 icon: "🤝",
               },
               {
                 step: "4",
                 title: "Enjoy Your Ride",
-                desc: "Sit back and travel comfortably to or from the airport. Payment is made directly to the driver.",
+                desc: "Sit back and travel comfortably. Fare payment is settled directly upon arrival.",
                 icon: "🚗",
               },
             ].map((item) => (
-              <div className="step-card" key={item.step}>
+              <div className="step-card card" key={item.step}>
                 <div className="step-card__number">{item.step}</div>
                 <div className="step-card__icon">{item.icon}</div>
                 <h3 className="step-card__title">{item.title}</h3>
@@ -153,64 +276,65 @@ export default function HomePage() {
               <path d="M12 8h.01" />
             </svg>
             <p>
-              <strong>Please note:</strong> A submitted booking request is not automatically confirmed.
-              Your booking is only confirmed once our team contacts you with the final arrangements.
+              <strong>Notice:</strong> All bookings are confirmed directly via our dispatch WhatsApp or telephone before pickup.
             </p>
           </div>
         </div>
       </section>
 
-      {/* ─── Why Choose Us ─────────────────────────── */}
-      <section className="section" id="why-us">
+      {/* ─── Module 6: Direct Contact & Hours ───────── */}
+      <section className="section" id="contact">
         <div className="container">
           <div className="section-header">
-            <span className="section-badge">Why Choose Us</span>
-            <h2>Service You Can Rely On</h2>
+            <span className="section-badge">Direct Communication</span>
+            <h2>Contact &amp; Assistance</h2>
+            <p>Have questions or urgent trip adjustments? We are here to help.</p>
           </div>
-          <div className="features-grid">
-            {[
-              {
-                icon: "🛫",
-                title: "Airport Specialists",
-                desc: "Focused specifically on KLIA and KLIA2 transfers, covering both Terminal 1 and Terminal 2.",
-              },
-              {
-                icon: "📱",
-                title: "Easy Booking Process",
-                desc: "Book through our form or WhatsApp. No complicated apps or accounts required.",
-              },
-              {
-                icon: "💬",
-                title: "Direct Communication",
-                desc: "Chat directly with our team for any questions, changes, or special requests.",
-              },
-              {
-                icon: "🚐",
-                title: "Vehicle Options",
-                desc: "Choose from sedans, MPVs, and vans to match your group size and luggage.",
-              },
-              {
-                icon: "🗺️",
-                title: "Wide Coverage",
-                desc: "Serving Kuala Lumpur, Petaling Jaya, Subang, Putrajaya, and surrounding areas.",
-              },
-              {
-                icon: "💰",
-                title: "Clear Pricing",
-                desc: "Get a fare quote before you travel. No hidden charges or surge pricing.",
-              },
-            ].map((feature) => (
-              <div className="feature-card card" key={feature.title}>
-                <div className="feature-card__icon">{feature.icon}</div>
-                <h3 className="feature-card__title">{feature.title}</h3>
-                <p className="feature-card__desc">{feature.desc}</p>
+          <div style={{ maxWidth: 860, margin: "0 auto" }}>
+            <div className="contact-grid" style={{ marginTop: 0 }}>
+              <div className="contact-channel" style={{ background: "var(--color-white)" }}>
+                <div className="contact-channel__icon contact-channel__icon--whatsapp">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                  </svg>
+                </div>
+                <div className="contact-channel__details">
+                  <div className="contact-channel__title">WhatsApp Instant Dispatch</div>
+                  <div className="contact-channel__subtitle">Fastest response for urgent rides &amp; quotes</div>
+                  {whatsappUrl && (
+                    <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="btn btn-whatsapp btn-sm">
+                      Chat on WhatsApp
+                    </a>
+                  )}
+                </div>
               </div>
-            ))}
+
+              <div className="contact-channel" style={{ background: "var(--color-white)" }}>
+                <div className="contact-channel__icon contact-channel__icon--phone">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                  </svg>
+                </div>
+                <div className="contact-channel__details">
+                  <div className="contact-channel__title">Hotline Calling</div>
+                  <div className="contact-channel__subtitle">Direct phone line with dispatch operator</div>
+                  {contact.phone && (
+                    <a href={phoneUrl || "#"} className="contact-channel__value">
+                      {contact.phone}
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div style={{ textAlign: "center", marginTop: 24, fontSize: "0.85rem", color: "var(--color-text-muted)" }}>
+              🕒 {bookingPolicies.operatingHours}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ─── FAQ ───────────────────────────────────── */}
+      {/* ─── Module 7: FAQ ──────────────────────────── */}
       <section className="section section-alt" id="faq">
         <div className="container">
           <div className="section-header">

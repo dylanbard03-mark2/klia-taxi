@@ -5,9 +5,6 @@ const nextConfig: NextConfig = {
     // Typecheck is run separately via `tsc --noEmit`
     ignoreBuildErrors: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
 };
 
 export default nextConfig;
