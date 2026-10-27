@@ -1,0 +1,17 @@
+<svg width="400" height="240" viewBox="0 0 400 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="240" rx="16" fill="#F1F0EC"/>
+  <!-- Sedan Silhouette -->
+  <path d="M70 150L110 95C115 88 125 85 135 85H260C270 85 280 88 288 98L330 150H350C356 150 360 154 360 160V175C360 178 358 180 355 180H330C330 166 319 155 305 155C291 155 280 166 280 180H140C140 166 129 155 115 155C101 155 90 166 90 180H50C44 180 40 176 40 170V160C40 154 44 150 50 150H70Z" fill="#2A7B88"/>
+  <!-- Windows -->
+  <path d="M120 100L85 142H185V100H120Z" fill="#E6F4F6"/>
+  <path d="M200 100V142H310L275 100H200Z" fill="#E6F4F6"/>
+  <!-- Wheels -->
+  <circle cx="115" cy="180" r="22" fill="#1B2A4A"/>
+  <circle cx="115" cy="180" r="10" fill="#C5A04E"/>
+  <circle cx="305" cy="180" r="22" fill="#1B2A4A"/>
+  <circle cx="305" cy="180" r="10" fill="#C5A04E"/>
+  <!-- Headlights -->
+  <path d="M345 155H360V165H342L345 155Z" fill="#FDF8EC"/>
+  <path d="M40 156H52V164H40V156Z" fill="#DC2626"/>
+  <text x="200" y="222" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600" fill="#4A5568" text-anchor="middle">Comfort Sedan (Up to 4 Pax)</text>
+</svg>

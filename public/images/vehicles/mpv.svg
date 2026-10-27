@@ -1,0 +1,19 @@
+<svg width="400" height="240" viewBox="0 0 400 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="240" rx="16" fill="#F1F0EC"/>
+  <!-- MPV Silhouette -->
+  <path d="M60 150L85 85C90 76 100 72 112 72H270C282 72 292 76 300 86L340 150H355C361 150 365 154 365 160V175C365 178 363 180 360 180H330C330 166 319 155 305 155C291 155 280 166 280 180H140C140 166 129 155 115 155C101 155 90 166 90 180H45C39 180 35 176 35 170V160C35 154 39 150 45 150H60Z" fill="#1E5F6A"/>
+  <!-- Windows -->
+  <path d="M95 86L72 142H145V86H95Z" fill="#E6F4F6"/>
+  <path d="M158 86V142H240V86H158Z" fill="#E6F4F6"/>
+  <path d="M252 86V142H325L292 86H252Z" fill="#E6F4F6"/>
+  <!-- Wheels -->
+  <circle cx="115" cy="180" r="22" fill="#1B2A4A"/>
+  <circle cx="115" cy="180" r="10" fill="#C5A04E"/>
+  <circle cx="305" cy="180" r="22" fill="#1B2A4A"/>
+  <circle cx="305" cy="180" r="10" fill="#C5A04E"/>
+  <!-- Roof Rails -->
+  <rect x="110" y="65" width="165" height="4" rx="2" fill="#C5A04E"/>
+  <rect x="120" y="69" width="6" height="3" fill="#1B2A4A"/>
+  <rect x="260" y="69" width="6" height="3" fill="#1B2A4A"/>
+  <text x="200" y="222" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600" fill="#4A5568" text-anchor="middle">Family MPV (Up to 5-6 Pax)</text>
+</svg>

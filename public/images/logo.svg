@@ -1,0 +1,8 @@
+<svg width="200" height="50" viewBox="0 0 200 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="44" height="44" y="3" rx="10" fill="#2A7B88" />
+  <path d="M12 32V21L22 13L32 21V32H27V25H17V32H12Z" fill="white" />
+  <circle cx="22" cy="21" r="2.5" fill="#C5A04E" />
+  <text x="56" y="31" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="800" fill="#1B2A4A" letter-spacing="-0.02em">KLIA</text>
+  <text x="114" y="31" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="800" fill="#2A7B88" letter-spacing="-0.02em">CAB</text>
+  <circle cx="168" cy="28" r="3" fill="#C5A04E" />
+</svg>

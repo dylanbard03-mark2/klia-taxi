@@ -1,0 +1,18 @@
+<svg width="400" height="240" viewBox="0 0 400 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="240" rx="16" fill="#F1F0EC"/>
+  <!-- Van Silhouette -->
+  <path d="M50 150L55 70C56 62 62 58 70 58H300C312 58 322 64 328 75L355 130L360 150H365C370 150 375 154 375 160V175C375 178 372 180 370 180H340C340 166 329 155 315 155C301 155 290 166 290 180H150C150 166 139 155 125 155C111 155 100 166 100 180H40C34 180 30 176 30 170V160C30 154 34 150 40 150H50Z" fill="#1B2A4A"/>
+  <!-- Windows -->
+  <path d="M68 70H125V135H60L68 70Z" fill="#E6F4F6"/>
+  <path d="M138 70H205V135H138V70Z" fill="#E6F4F6"/>
+  <path d="M218 70H285V135H218V70Z" fill="#E6F4F6"/>
+  <path d="M298 70H315L340 120L345 135H298V70Z" fill="#E6F4F6"/>
+  <!-- Wheels -->
+  <circle cx="125" cy="180" r="24" fill="#2A7B88"/>
+  <circle cx="125" cy="180" r="10" fill="#C5A04E"/>
+  <circle cx="315" cy="180" r="24" fill="#2A7B88"/>
+  <circle cx="315" cy="180" r="10" fill="#C5A04E"/>
+  <!-- Stripe Accent -->
+  <rect x="30" y="148" width="340" height="4" fill="#C5A04E"/>
+  <text x="200" y="222" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600" fill="#4A5568" text-anchor="middle">Group Passenger Van (Up to 7-10 Pax)</text>
+</svg>
