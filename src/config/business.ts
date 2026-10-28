@@ -34,18 +34,18 @@ export const contact = {
   instagram: "",
 };
 
-// ─── Colours (CSS values) ────────────────────────────
+// ─── Colours (CSS values: Dark Navy & Gold Theme) ─────
 export const colors = {
-  background: "#FAFAF8",
-  textPrimary: "#1B2A4A",
-  textSecondary: "#4A5568",
-  accentTeal: "#2A7B88",
-  accentTealLight: "#E6F4F6",
-  accentGold: "#C5A04E",
+  background: "#0B132B",
+  textPrimary: "#F8FAFC",
+  textSecondary: "#CBD5E1",
+  accentTeal: "#F59E0B",
+  accentTealLight: "rgba(245, 158, 11, 0.15)",
+  accentGold: "#F59E0B",
   white: "#FFFFFF",
-  border: "#E2E8F0",
-  error: "#DC2626",
-  success: "#16A34A",
+  border: "rgba(255, 255, 255, 0.12)",
+  error: "#EF4444",
+  success: "#10B981",
 };
 
 // ─── Service Areas ───────────────────────────────────

@@ -64,69 +64,7 @@ export function FAQSection({ items }: FAQSectionProps) {
         </div>
       ))}
 
-      <style jsx>{`
-        .faq-list {
-          border: 1px solid var(--color-border);
-          border-radius: var(--radius-lg);
-          overflow: hidden;
-          background: var(--color-white);
-        }
 
-        .faq-item {
-          border-bottom: 1px solid var(--color-border-light);
-        }
-
-        .faq-item:last-child {
-          border-bottom: none;
-        }
-
-        .faq-item__trigger {
-          width: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 16px;
-          padding: 20px 24px;
-          background: none;
-          border: none;
-          cursor: pointer;
-          font-family: var(--font-body);
-          text-align: left;
-        }
-
-        .faq-item__trigger:hover {
-          background: var(--color-bg-alt);
-        }
-
-        .faq-item__question {
-          font-size: 0.95rem;
-          font-weight: 600;
-          color: var(--color-text-primary);
-          line-height: 1.5;
-        }
-
-        .faq-item__icon {
-          flex-shrink: 0;
-          color: var(--color-text-muted);
-        }
-
-        .faq-item--open .faq-item__icon {
-          color: var(--color-accent-teal);
-        }
-
-        .faq-item__content {
-          overflow: hidden;
-          transition: max-height 300ms ease, opacity 200ms ease;
-        }
-
-        .faq-item__answer {
-          padding: 0 24px 20px;
-          font-size: 0.9rem;
-          line-height: 1.7;
-          margin: 0;
-          color: var(--color-text-secondary);
-        }
-      `}</style>
     </div>
   );
 }

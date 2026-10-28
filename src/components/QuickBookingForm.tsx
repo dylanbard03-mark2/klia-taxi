@@ -11,7 +11,13 @@ export function QuickBookingForm() {
   const [date, setDate] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const today = new Date().toISOString().split("T")[0];
+  // Use local date to avoid off-by-one day in Malaysia (UTC+8)
+  const todayLocal = new Date();
+  const today = [
+    todayLocal.getFullYear(),
+    String(todayLocal.getMonth() + 1).padStart(2, "0"),
+    String(todayLocal.getDate()).padStart(2, "0"),
+  ].join("-");
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -112,66 +118,6 @@ export function QuickBookingForm() {
         </div>
       </div>
 
-      <style jsx>{`
-        .quick-form {
-          padding: 0;
-          overflow: hidden;
-          box-shadow: var(--shadow-xl);
-          border: none;
-        }
-
-        .quick-form__header {
-          padding: 20px 28px;
-          border-bottom: 1px solid var(--color-border-light);
-        }
-
-        .quick-form__body {
-          padding: 24px 28px 28px;
-        }
-
-        .quick-form__direction {
-          display: flex;
-          gap: 8px;
-          margin-bottom: 20px;
-          background: var(--color-bg-alt);
-          border-radius: var(--radius-md);
-          padding: 4px;
-        }
-
-        .quick-form__dir-btn {
-          flex: 1;
-          padding: 10px 16px;
-          border: none;
-          background: transparent;
-          border-radius: var(--radius-sm);
-          font-family: var(--font-body);
-          font-size: 0.9rem;
-          font-weight: 500;
-          color: var(--color-text-secondary);
-          cursor: pointer;
-          transition: all var(--transition-fast);
-        }
-
-        .quick-form__dir-btn.active {
-          background: var(--color-white);
-          color: var(--color-accent-teal);
-          box-shadow: var(--shadow-sm);
-          font-weight: 600;
-        }
-
-        .quick-form__fields {
-          display: grid;
-          grid-template-columns: 1fr 1fr 160px auto;
-          gap: 12px;
-          align-items: start;
-        }
-
-        @media (max-width: 768px) {
-          .quick-form__fields {
-            grid-template-columns: 1fr;
-          }
-        }
-      `}</style>
     </form>
   );
 }

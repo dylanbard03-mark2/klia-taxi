@@ -54,10 +54,20 @@ function BookingFormInner() {
   const [errors, setErrors] = useState<Partial<Record<keyof BookingData, string>>>({});
   const [step, setStep] = useState<"form" | "review" | "submitted">("form");
 
-  const today = new Date().toISOString().split("T")[0];
-  const maxDate = new Date();
-  maxDate.setDate(maxDate.getDate() + bookingPolicies.maximumAdvanceDays);
-  const maxDateStr = maxDate.toISOString().split("T")[0];
+  // Use local date (not UTC) to avoid off-by-one day in Malaysia (UTC+8)
+  const todayLocal = new Date();
+  const today = [
+    todayLocal.getFullYear(),
+    String(todayLocal.getMonth() + 1).padStart(2, "0"),
+    String(todayLocal.getDate()).padStart(2, "0"),
+  ].join("-");
+  const maxDateLocal = new Date();
+  maxDateLocal.setDate(maxDateLocal.getDate() + bookingPolicies.maximumAdvanceDays);
+  const maxDateStr = [
+    maxDateLocal.getFullYear(),
+    String(maxDateLocal.getMonth() + 1).padStart(2, "0"),
+    String(maxDateLocal.getDate()).padStart(2, "0"),
+  ].join("-");
 
   // Pre-fill from URL parameters
   useEffect(() => {
@@ -108,8 +118,12 @@ function BookingFormInner() {
     }
     if (!data.time) newErrors.time = "Pickup time is required";
     if (!data.vehicleType) newErrors.vehicleType = "Please select a vehicle type";
-    if (!data.passengers || parseInt(data.passengers) < 1) {
+    const selectedVehicleForValidation = vehicles.find((v) => v.id === data.vehicleType);
+    const paxCount = parseInt(data.passengers);
+    if (!data.passengers || paxCount < 1) {
       newErrors.passengers = "At least 1 passenger is required";
+    } else if (selectedVehicleForValidation && paxCount > selectedVehicleForValidation.maxPassengers) {
+      newErrors.passengers = `${selectedVehicleForValidation.name} holds up to ${selectedVehicleForValidation.maxPassengers} passengers. Please choose a larger vehicle or reduce passenger count.`;
     }
     if (!data.luggage) newErrors.luggage = "Please enter luggage count";
     if (!data.privacyAccepted) {
@@ -189,14 +203,14 @@ function BookingFormInner() {
         <div
           style={{
             background: "var(--color-accent-gold-light)",
-            border: "1px solid #EDD9A3",
+            border: "1px solid rgba(245, 158, 11, 0.35)",
             borderRadius: "var(--radius-md)",
             padding: "16px 20px",
             maxWidth: 480,
             margin: "0 auto 24px",
           }}
         >
-          <p style={{ fontSize: "0.9rem", margin: 0, fontWeight: 500, color: "var(--color-text-primary)" }}>
+          <p style={{ fontSize: "0.9rem", margin: 0, fontWeight: 500, color: "var(--color-accent-gold)" }}>
             ⚠️ Your booking is <strong>not confirmed</strong> until our team contacts you.
           </p>
         </div>
@@ -259,12 +273,13 @@ function BookingFormInner() {
         <div
           style={{
             background: "var(--color-accent-gold-light)",
-            border: "1px solid #EDD9A3",
+            border: "1px solid rgba(245, 158, 11, 0.35)",
             borderRadius: "var(--radius-md)",
             padding: "14px 18px",
             marginBottom: 24,
             fontSize: "0.85rem",
             lineHeight: 1.6,
+            color: "var(--color-text-primary)",
           }}
         >
           <strong>Important:</strong> Clicking &quot;Continue to WhatsApp&quot; will open WhatsApp with your
@@ -307,51 +322,14 @@ function BookingFormInner() {
           )}
         </div>
 
-        <style jsx>{`
-          .booking-review {
-            padding: 32px;
-          }
 
-          .review-section {
-            margin-bottom: 24px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid var(--color-border-light);
-          }
-
-          .review-section__title {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--color-text-muted);
-            margin: 0 0 12px;
-          }
-
-          .review-dl {
-            display: grid;
-            grid-template-columns: 120px 1fr;
-            gap: 8px 16px;
-            margin: 0;
-          }
-
-          .review-dl dt {
-            font-size: 0.875rem;
-            color: var(--color-text-muted);
-          }
-
-          .review-dl dd {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--color-text-primary);
-            margin: 0;
-          }
-        `}</style>
       </div>
     );
   }
 
   // ─── Form State ─────────────────────────────────
   return (
-    <form className="booking-form card" onSubmit={handleReview} noValidate>
+    <form id="bookingForm" className="booking-form card" onSubmit={handleReview} noValidate>
       {/* No WhatsApp Warning */}
       {!hasWhatsApp && (
         <div
@@ -377,33 +355,37 @@ function BookingFormInner() {
 
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="booking-name" className="form-label">
+            <label htmlFor="custName" className="form-label">
               Full Name <span className="required">*</span>
             </label>
             <input
-              id="booking-name"
+              id="custName"
+              name="custName"
               type="text"
               className={`form-input ${errors.fullName ? "error" : ""}`}
               value={data.fullName}
               onChange={(e) => updateField("fullName", e.target.value)}
               placeholder="Your full name"
               autoComplete="name"
+              required
             />
             {errors.fullName && <div className="form-error">{errors.fullName}</div>}
           </div>
 
           <div className="form-group">
-            <label htmlFor="booking-mobile" className="form-label">
+            <label htmlFor="custPhone" className="form-label">
               Mobile Number <span className="required">*</span>
             </label>
             <input
-              id="booking-mobile"
+              id="custPhone"
+              name="custPhone"
               type="tel"
               className={`form-input ${errors.mobile ? "error" : ""}`}
               value={data.mobile}
               onChange={(e) => updateField("mobile", e.target.value)}
               placeholder="+60 12-345 6789"
               autoComplete="tel"
+              required
             />
             {errors.mobile && <div className="form-error">{errors.mobile}</div>}
             <div className="form-hint">Include country code for international numbers</div>
@@ -411,11 +393,12 @@ function BookingFormInner() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="booking-email" className="form-label">
+          <label htmlFor="custEmail" className="form-label">
             Email Address <span style={{ color: "var(--color-text-muted)", fontWeight: 400 }}>(optional)</span>
           </label>
           <input
-            id="booking-email"
+            id="custEmail"
+            name="custEmail"
             type="email"
             className="form-input"
             value={data.email}
@@ -433,7 +416,7 @@ function BookingFormInner() {
         {/* Direction */}
         <div className="form-group">
           <label className="form-label">Journey Direction <span className="required">*</span></label>
-          <div className="direction-toggle">
+          <div className="direction-toggle" id="tripDirection">
             <button
               type="button"
               className={`direction-btn ${data.direction === "to-airport" ? "active" : ""}`}
@@ -453,31 +436,35 @@ function BookingFormInner() {
 
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="booking-pickup" className="form-label">
+            <label htmlFor="pickupAddress" className="form-label">
               Pickup Location <span className="required">*</span>
             </label>
             <input
-              id="booking-pickup"
+              id="pickupAddress"
+              name="pickupAddress"
               type="text"
               className={`form-input ${errors.pickup ? "error" : ""}`}
               value={data.pickup}
               onChange={(e) => updateField("pickup", e.target.value)}
               placeholder={data.direction === "to-airport" ? "e.g. Petaling Jaya, Sunway Hotel" : "e.g. KLIA Terminal 1 Arrival Hall"}
+              required
             />
             {errors.pickup && <div className="form-error">{errors.pickup}</div>}
           </div>
 
           <div className="form-group">
-            <label htmlFor="booking-destination" className="form-label">
+            <label htmlFor="destinationAddress" className="form-label">
               Destination <span className="required">*</span>
             </label>
             <input
-              id="booking-destination"
+              id="destinationAddress"
+              name="destinationAddress"
               type="text"
               className={`form-input ${errors.destination ? "error" : ""}`}
               value={data.destination}
               onChange={(e) => updateField("destination", e.target.value)}
               placeholder={data.direction === "to-airport" ? "e.g. KLIA Terminal 2" : "e.g. KL Sentral, Bangsar"}
+              required
             />
             {errors.destination && <div className="form-error">{errors.destination}</div>}
           </div>
@@ -485,14 +472,16 @@ function BookingFormInner() {
 
         <div className="form-row form-row--3col">
           <div className="form-group">
-            <label htmlFor="booking-terminal" className="form-label">
+            <label htmlFor="terminal" className="form-label">
               Airport Terminal <span className="required">*</span>
             </label>
             <select
-              id="booking-terminal"
+              id="terminal"
+              name="terminal"
               className={`form-select ${errors.terminal ? "error" : ""}`}
               value={data.terminal}
               onChange={(e) => updateField("terminal", e.target.value)}
+              required
             >
               <option value="">Select terminal</option>
               {serviceAreas.airports.map((a) => (
@@ -504,31 +493,35 @@ function BookingFormInner() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="booking-date" className="form-label">
+            <label htmlFor="pickupDate" className="form-label">
               Pickup Date <span className="required">*</span>
             </label>
             <input
-              id="booking-date"
+              id="pickupDate"
+              name="pickupDate"
               type="date"
               className={`form-input ${errors.date ? "error" : ""}`}
               min={today}
               max={maxDateStr}
               value={data.date}
               onChange={(e) => updateField("date", e.target.value)}
+              required
             />
             {errors.date && <div className="form-error">{errors.date}</div>}
           </div>
 
           <div className="form-group">
-            <label htmlFor="booking-time" className="form-label">
+            <label htmlFor="pickupTime" className="form-label">
               Pickup Time <span className="required">*</span>
             </label>
             <input
-              id="booking-time"
+              id="pickupTime"
+              name="pickupTime"
               type="time"
               className={`form-input ${errors.time ? "error" : ""}`}
               value={data.time}
               onChange={(e) => updateField("time", e.target.value)}
+              required
             />
             {errors.time && <div className="form-error">{errors.time}</div>}
           </div>
@@ -536,11 +529,12 @@ function BookingFormInner() {
 
         {data.direction === "from-airport" && (
           <div className="form-group">
-            <label htmlFor="booking-flight" className="form-label">
-              Flight Number <span style={{ color: "var(--color-text-muted)", fontWeight: 400 }}>(recommended)</span>
+            <label htmlFor="flightNumber" className="form-label">
+              Flight Number <span style={{ color: "var(--color-text-muted)", fontWeight: 400 }}>(optional)</span>
             </label>
             <input
-              id="booking-flight"
+              id="flightNumber"
+              name="flightNumber"
               type="text"
               className="form-input"
               value={data.flightNumber}
@@ -557,14 +551,16 @@ function BookingFormInner() {
         <legend className="form-legend">Vehicle &amp; Passengers</legend>
 
         <div className="form-group">
-          <label htmlFor="booking-vehicle" className="form-label">
+          <label htmlFor="selectedVehicle" className="form-label">
             Vehicle Type <span className="required">*</span>
           </label>
           <select
-            id="booking-vehicle"
+            id="selectedVehicle"
+            name="selectedVehicle"
             className={`form-select ${errors.vehicleType ? "error" : ""}`}
             value={data.vehicleType}
             onChange={(e) => updateField("vehicleType", e.target.value)}
+            required
           >
             <option value="">Select vehicle type</option>
             {vehicles.map((v) => (
@@ -578,14 +574,16 @@ function BookingFormInner() {
 
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="booking-passengers" className="form-label">
+            <label htmlFor="custPassengers" className="form-label">
               Number of Passengers <span className="required">*</span>
             </label>
             <select
-              id="booking-passengers"
+              id="custPassengers"
+              name="custPassengers"
               className={`form-select ${errors.passengers ? "error" : ""}`}
               value={data.passengers}
               onChange={(e) => updateField("passengers", e.target.value)}
+              required
             >
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
                 <option key={n} value={String(n)}>{n} {n === 1 ? "passenger" : "passengers"}</option>
@@ -595,14 +593,16 @@ function BookingFormInner() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="booking-luggage" className="form-label">
+            <label htmlFor="custLuggage" className="form-label">
               Number of Luggage <span className="required">*</span>
             </label>
             <select
-              id="booking-luggage"
+              id="custLuggage"
+              name="custLuggage"
               className={`form-select ${errors.luggage ? "error" : ""}`}
               value={data.luggage}
               onChange={(e) => updateField("luggage", e.target.value)}
+              required
             >
               {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
                 <option key={n} value={String(n)}>{n} {n === 1 ? "piece" : "pieces"}</option>
@@ -613,11 +613,12 @@ function BookingFormInner() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="booking-notes" className="form-label">
+          <label htmlFor="bookingNotes" className="form-label">
             Additional Notes <span style={{ color: "var(--color-text-muted)", fontWeight: 400 }}>(optional)</span>
           </label>
           <textarea
-            id="booking-notes"
+            id="bookingNotes"
+            name="bookingNotes"
             className="form-textarea"
             value={data.notes}
             onChange={(e) => updateField("notes", e.target.value)}
@@ -661,6 +662,7 @@ function BookingFormInner() {
       </div>
 
       <button
+        id="submitBookingBtn"
         type="submit"
         className="btn btn-primary btn-lg"
         style={{ width: "100%", marginTop: 24 }}
@@ -680,77 +682,7 @@ function BookingFormInner() {
         You will be able to review before sending via WhatsApp
       </p>
 
-      <style jsx>{`
-        .booking-form {
-          padding: 32px;
-        }
 
-        .form-fieldset {
-          border: none;
-          padding: 0;
-          margin: 0 0 32px;
-        }
-
-        .form-legend {
-          font-size: 1rem;
-          font-weight: 700;
-          color: var(--color-text-primary);
-          padding-bottom: 16px;
-          margin-bottom: 20px;
-          border-bottom: 1px solid var(--color-border-light);
-          width: 100%;
-        }
-
-        .form-row {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 16px;
-        }
-
-        .form-row--3col {
-          grid-template-columns: 1fr 1fr 1fr;
-        }
-
-        .direction-toggle {
-          display: flex;
-          gap: 8px;
-          background: var(--color-bg-alt);
-          border-radius: var(--radius-md);
-          padding: 4px;
-        }
-
-        .direction-btn {
-          flex: 1;
-          padding: 12px 16px;
-          border: none;
-          background: transparent;
-          border-radius: var(--radius-sm);
-          font-family: var(--font-body);
-          font-size: 0.9rem;
-          font-weight: 500;
-          color: var(--color-text-secondary);
-          cursor: pointer;
-          transition: all var(--transition-fast);
-        }
-
-        .direction-btn.active {
-          background: var(--color-white);
-          color: var(--color-accent-teal);
-          box-shadow: var(--shadow-sm);
-          font-weight: 600;
-        }
-
-        @media (max-width: 640px) {
-          .form-row,
-          .form-row--3col {
-            grid-template-columns: 1fr;
-          }
-
-          .booking-form {
-            padding: 24px 20px;
-          }
-        }
-      `}</style>
     </form>
   );
 }
